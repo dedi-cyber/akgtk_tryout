@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AKGTK Kemenag RI - Platform Asesmen Kompetensi Eksekutif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        kemenag: {
+                            DEFAULT: '#005a36',
+                            dark: '#003d24',
+                            light: '#008751',
+                            accent: '#00b36b',
+                            gold: '#d4af37',
+                            goldlight: '#f3e5ab',
+                            golddark: '#997a15'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['Cinzel', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gold-gradient {
+            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+        }
+        .gold-border {
+            border-image: linear-gradient(to right, #bf953f, #fcf6ba, #b38728) 1;
+        }
+        .kemenag-glass {
+            background: rgba(0, 61, 36, 0.85);
+            backdrop-filter: blur(12px);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 30px -5px rgba(0, 90, 54, 0.1), 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #005a36;
+            border-radius: 4px;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans h-full flex flex-col custom-scrollbar">
+
+    <header class="bg-gradient-to-r from-kemenag-dark via-kemenag to-kemenag-dark text-white border-b-2 border-kemenag-gold shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-11 h-11 rounded-full bg-white/10 p-1.5 flex items-center justify-center border border-kemenag-gold/50 shadow-inner">
+                    <i class="fa-solid me-0 fa-award text-2xl text-kemenag-gold"></i>
+                </div>
+                <div>
+                    <h1 class="font-serif text-lg sm:text-xl font-bold tracking-wide text-white flex items-center gap-2">
+                        AKGTK <span class="text-kemenag-gold font-sans text-xs px-2 py-0.5 rounded bg-black/30 border border-kemenag-gold/30">HOTS PRO</span>
+                    </h1>
+                    <p class="text-[11px] text-emerald-200 tracking-wider font-medium">Asesmen Kompetensi Guru & Tenaga Kependidikan Kemenag RI</p>
+                </div>
+            </div>
+
+            <!-- Header Right State Info -->
+            <div id="header-user-info" class="hidden items-center space-x-4">
+                <div class="text-right hidden md:block">
+                    <div id="header-user-name" class="font-bold text-sm text-white">Nama Peserta</div>
+                    <div id="header-user-role" class="text-xs text-kemenag-goldlight">Peran Peserta</div>
+                </div>
+                <button onclick="confirmExitExam()" class="px-3 py-1.5 rounded-lg bg-red-600/80 hover:bg-red-700 text-xs font-semibold tracking-wide text-white transition flex items-center space-x-1.5 border border-red-400/30">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Keluar</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col justify-center">
+
+        <!-- VIEW 1: LOGIN & ROLE SELECTION -->
+        <section id="view-login" class="max-w-4xl mx-auto w-full">
+            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200/80">
+                <!-- Header Banner -->
+                <div class="bg-gradient-to-r from-kemenag-dark via-kemenag to-kemenag-dark p-8 text-center relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 w-40 h-40 bg-kemenag-gold/10 rounded-full blur-2xl"></div>
+                    <div class="relative z-10">
+                        <div class="inline-flex p-3 bg-white/10 rounded-2xl border border-kemenag-gold/40 mb-3 shadow-lg">
+                            <i class="fa-solid fa-graduation-cap text-3xl text-kemenag-gold"></i>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-serif font-bold text-white">PORTAL LATIHAN SOAL AKGTK</h2>
+                        <p class="text-emerald-100 text-sm mt-2 max-w-2xl mx-auto font-light">
+                            Platform Latihan Soal AKGTK Madrasah Kementerian Agama Republik Indonesia.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Registration Form -->
+                <form id="form-login" onsubmit="handleLoginSubmit(event)" class="p-6 sm:p-10 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Nama Lengkap (Tanpa Gelar) -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Nama Lengkap (Tanpa Gelar) <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                                    <i class="fa-solid fa-user-check"></i>
+                                </span>
+                                <input type="text" id="input-nama" required placeholder="Contoh: Ahmad Fauzi" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-kemenag focus:border-kemenag text-sm transition">
+                            </div>
+                        </div>
+
+                        <!-- Instansi / Madrasah -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Nama Madrasah / Satker <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                                    <i class="fa-solid fa-building-columns"></i>
+                                </span>
+                                <input type="text" id="input-madrasah" required placeholder="MAN 1 Kota / MTsN / MIN / RA" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-kemenag focus:border-kemenag text-sm transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Role Selection Cards -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-3">Pilih Peran Asesmen (Sesuai Tugas Fungsi) <span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            
+                            <!-- Role: GURU -->
+                            <label class="role-card relative flex flex-col p-4 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-kemenag transition bg-slate-50/50">
+                                <input type="radio" name="role" value="guru" class="sr-only" required onchange="toggleRoleOptions('guru')">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <div class="w-9 h-9 rounded-lg bg-emerald-100 text-kemenag flex items-center justify-center font-bold">
+                                        <i class="fa-solid fa-chalkboard-user"></i>
+                                    </div>
+                                    <span class="font-bold text-slate-800 text-sm">GURU MADRASAH</span>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Kompetensi Pedagogik & Profesional (HOTS) Rumpun Mata Pelajaran.</p>
+                            </label>
+
+                            <!-- Role: KEPALA MADRASAH -->
+                            <label class="role-card relative flex flex-col p-4 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-kemenag transition bg-slate-50/50">
+                                <input type="radio" name="role" value="kamad" class="sr-only" onchange="toggleRoleOptions('kamad')">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <div class="w-9 h-9 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+                                        <i class="fa-solid fa-user-tie"></i>
+                                    </div>
+                                    <span class="font-bold text-slate-800 text-sm">KEPALA MADRASAH</span>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Manajerial, Supervisi Klinis, Kewirausahaan & Kepemimpinan.</p>
+                            </label>
+
+                            <!-- Role: PENGAWAS MADRASAH -->
+                            <label class="role-card relative flex flex-col p-4 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-kemenag transition bg-slate-50/50">
+                                <input type="radio" name="role" value="pengawas" class="sr-only" onchange="toggleRoleOptions('pengawas')">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <div class="w-9 h-9 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center font-bold">
+                                        <i class="fa-solid fa-magnifying-glass-chart"></i>
+                                    </div>
+                                    <span class="font-bold text-slate-800 text-sm">PENGAWAS MADRASAH</span>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Supervisi Akademik, Manajerial, Evaluasi Mutu & Litbang.</p>
+                            </label>
+
+                            <!-- Role: TENDIK PERPUSTAKAAN -->
+                            <label class="role-card relative flex flex-col p-4 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-kemenag transition bg-slate-50/50">
+                                <input type="radio" name="role" value="pusat" class="sr-only" onchange="toggleRoleOptions('pusat')">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <div class="w-9 h-9 rounded-lg bg-purple-100 text-purple-800 flex items-center justify-center font-bold">
+                                        <i class="fa-solid fa-book-bookmark"></i>
+                                    </div>
+                                    <span class="font-bold text-slate-800 text-sm">TENAGA PERPUSTAKAAN</span>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Tata Kelola Pustaka, Sirkulasi, Otomasi & Literasi Digital.</p>
+                            </label>
+
+                            <!-- Role: TENDIK LABORATORIUM -->
+                            <label class="role-card relative flex flex-col p-4 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-kemenag transition bg-slate-50/50">
+                                <input type="radio" name="role" value="lab" class="sr-only" onchange="toggleRoleOptions('lab')">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <div class="w-9 h-9 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center font-bold">
+                                        <i class="fa-solid fa-flask-vial"></i>
+                                    </div>
+                                    <span class="font-bold text-slate-800 text-sm">TENAGA LABORATORIUM</span>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Manajemen Lab, K3 Keselamatan Kerja, Alat Praktikum & Inventaris.</p>
+                            </label>
+
+                            <!-- Option for AI Generator Mode -->
+                            <label class="role-card relative flex flex-col p-4 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-kemenag transition bg-slate-50/50">
+                                <input type="radio" name="role" value="custom_ai" class="sr-only" onchange="toggleRoleOptions('custom_ai')">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <div class="w-9 h-9 rounded-lg bg-yellow-100 text-amber-700 flex items-center justify-center font-bold">
+                                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    </div>
+                                    <span class="font-bold text-slate-800 text-sm">CUSTOM AI HOTS SIMULATOR</span>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Generasi 100 Soal HOTS Spesifik Menggunakan AI Gemini Live Engine.</p>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Sub Options for Guru Role -->
+                    <div id="guru-sub-options" class="hidden p-4 bg-emerald-50/80 rounded-xl border border-emerald-200 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-emerald-900 mb-1">Jenjang Pendidikan</label>
+                                <select id="select-jenjang" class="w-full py-2 px-3 rounded-lg border border-emerald-300 text-sm bg-white focus:ring-2 focus:ring-kemenag">
+                                    <option value="RA">Raudhatul Athfal (RA)</option>
+                                    <option value="MI">Madrasah Ibtidaiyah (MI)</option>
+                                    <option value="MTs" selected>Madrasah Tsanawiyah (MTs)</option>
+                                    <option value="MA">Madrasah Aliyah (MA)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-emerald-900 mb-1">Rumpun Mata Pelajaran / Posisi</label>
+                                <select id="select-mapel" class="w-full py-2 px-3 rounded-lg border border-emerald-300 text-sm bg-white focus:ring-2 focus:ring-kemenag">
+                                    <option value="Guru Kelas (Literasi/Numerasi/Sains)">Guru Kelas (RA/MI)</option>
+                                    <option value="Matematika HOTS">Matematika</option>
+                                    <option value="Sains / IPA Terpadu">Sains / IPA Terpadu</option>
+                                    <option value="Bahasa Indonesia & Literasi">Bahasa Indonesia</option>
+                                    <option value="Pendidikan Agama Islam (PAI/Aswaja)">PAI (Akidah/Fiqih/SKI/Al-Qur'an Hadis)</option>
+                                    <option value="Bimbingan Konseling (BK)">Bimbingan Konseling (BK)</option>
+                                    <option value="Bahasa Inggris">Bahasa Inggris</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exam Execution Settings -->
+                    <div class="p-4 bg-slate-100/70 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center space-x-4">
+                            <label class="text-xs font-bold text-slate-700">Jumlah Soal:</label>
+                            <select id="select-jumlah-soal" class="py-1.5 px-3 rounded-lg border border-slate-300 text-xs font-semibold bg-white">
+                                <option value="10">10 Soal (Uji Cepat Assessor)</option>
+                                <option value="25">25 Soal (Simulasi Standar Module)</option>
+                                <option value="50">50 Soal (Asesmen Komprehensif)</option>
+                                <option value="100" selected>100 Soal (AKGTK Penuh - Standard Kemenag)</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <label class="text-xs font-bold text-slate-700">Mode Asesmen:</label>
+                            <select id="select-mode-ujian" class="py-1.5 px-3 rounded-lg border border-slate-300 text-xs font-semibold bg-white">
+                                <option value="simulasi">Simulasi Waktu Nyata (Timer & Hasil di Akhir)</option>
+                                <option value="latihan">Mode Latihan & Pembahasan Langsung (Coach Mode)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Action Button -->
+                    <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-kemenag-dark via-kemenag to-kemenag-light text-white font-bold text-base shadow-lg hover:shadow-2xl transition transform active:scale-[0.99] flex items-center justify-center space-x-2 border border-kemenag-gold/40">
+                        <i class="fa-solid fa-paper-plane text-kemenag-gold"></i>
+                        <span>MULAI ASESMEN KOMPETENSI AKGTK</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- VIEW 2: EXAM SIMULATION PLATFORM -->
+        <section id="view-exam" class="hidden flex-col h-full space-y-4">
+            <!-- Top Exam Header & Navigation Bar -->
+            <div class="bg-white rounded-xl shadow-md p-4 border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <span id="badge-exam-role" class="px-3 py-1 bg-kemenag-dark text-kemenag-gold text-xs font-bold rounded-full border border-kemenag-gold/30 uppercase tracking-wider">
+                        GURU MTs - MATEMATIKA
+                    </span>
+                    <span id="exam-mode-badge" class="px-2.5 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
+                        Mode Simulasi
+                    </span>
+                </div>
+
+                <!-- Timer & Controls -->
+                <div class="flex items-center space-x-4 ml-auto">
+                    <div id="timer-box" class="flex items-center space-x-2 px-4 py-1.5 bg-red-50 border border-red-200 rounded-lg text-red-700 font-mono font-bold text-lg">
+                        <i class="fa-regular fa-clock animate-pulse"></i>
+                        <span id="exam-timer">120:00</span>
+                    </div>
+                    <button onclick="toggleQuestionGridModal()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold flex items-center space-x-2 border border-slate-300">
+                        <i class="fa-solid fa-grip"></i>
+                        <span class="hidden sm:inline">Navigasi Soal</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Question & Panel Area -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+                <!-- Main Question Card (3 Cols) -->
+                <div class="lg:col-span-3 bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-8 flex flex-col justify-between min-h-[500px]">
+                    <div>
+                        <!-- Header Indicator -->
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                            <div class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                Soal No. <span id="q-number" class="text-xl font-extrabold text-kemenag">1</span> / <span id="q-total">100</span>
+                            </div>
+                            <div id="q-domain-badge" class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-bold text-xs border border-emerald-200">
+                                Domain: Kompetensi Pedagogik
+                            </div>
+                        </div>
+
+                        <!-- Question Scenario & Prompt -->
+                        <div class="space-y-4 mb-8">
+                            <div id="q-scenario" class="p-4 bg-slate-50 border-l-4 border-kemenag rounded-r-xl text-slate-700 text-sm leading-relaxed italic font-serif">
+                                Scenario Context Placeholder
+                            </div>
+                            <h3 id="q-text" class="text-base sm:text-lg font-semibold text-slate-900 leading-snug">
+                                Pertanyaan Utama HOTS...
+                            </h3>
+                        </div>
+
+                        <!-- Answer Options -->
+                        <div id="q-options" class="space-y-3">
+                            <!-- Options injected dynamically -->
+                        </div>
+
+                        <!-- Live Coaching Explanation (Only in Latihan Mode) -->
+                        <div id="live-explanation-box" class="hidden mt-6 p-5 bg-blue-50 border border-blue-200 rounded-xl space-y-2 text-sm text-blue-900">
+                            <div class="flex items-center space-x-2 font-bold text-blue-950">
+                                <i class="fa-solid fa-graduation-cap text-blue-700"></i>
+                                <span>PEMBAHASAN DIREKTUR ASESOR HOTS:</span>
+                            </div>
+                            <div id="live-explanation-text" class="text-xs leading-relaxed text-slate-700"></div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Nav Controls -->
+                    <div class="flex items-center justify-between pt-6 border-t border-slate-100 mt-8">
+                        <button id="btn-prev" onclick="navigateQuestion(-1)" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm flex items-center space-x-2 transition disabled:opacity-40">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            <span>Sebelumnya</span>
+                        </button>
+
+                        <button id="btn-flag" onclick="toggleFlagQuestion()" class="px-4 py-2.5 rounded-xl border-2 border-amber-400 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs sm:text-sm flex items-center space-x-2 transition">
+                            <i class="fa-solid fa-bookmark" id="flag-icon"></i>
+                            <span id="flag-text">Ragu-Ragu</span>
+                        </button>
+
+                        <button id="btn-next" onclick="navigateQuestion(1)" class="px-5 py-2.5 rounded-xl bg-kemenag hover:bg-kemenag-dark text-white font-bold text-xs sm:text-sm flex items-center space-x-2 shadow-md transition">
+                            <span>Berikutnya</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Question Grid Sidebar (1 Col) -->
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 flex flex-col h-full">
+                    <h4 class="font-bold text-slate-800 text-sm mb-4 flex items-center justify-between border-b border-slate-100 pb-3">
+                        <span>Peta Lembar Jawaban</span>
+                        <span id="grid-progress-text" class="text-xs font-normal text-slate-500">0 Dijawab</span>
+                    </h4>
+
+                    <!-- Question Numbers Palette -->
+                    <div id="question-palette" class="grid grid-cols-5 gap-2 max-h-[380px] overflow-y-auto pr-1 custom-scrollbar">
+                        <!-- Palette Items injected dynamically -->
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="mt-6 pt-4 border-t border-slate-100 space-y-2 text-[11px] text-slate-600">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3.5 h-3.5 rounded bg-kemenag inline-block"></span>
+                            <span>Sudah Dijawab</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3.5 h-3.5 rounded bg-amber-400 inline-block"></span>
+                            <span>Ragu-Ragu</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3.5 h-3.5 rounded bg-slate-100 border border-slate-300 inline-block"></span>
+                            <span>Belum Dijawab</span>
+                        </div>
+                    </div>
+
+                    <!-- Finish Exam Button -->
+                    <button onclick="confirmFinishExam()" class="mt-6 w-full py-3 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold text-xs tracking-wider uppercase shadow-lg transition">
+                        <i class="fa-solid fa-circle-check mr-1.5"></i> Selesaikan Asesmen
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: DIAGNOSTIC RESULTS & CERTIFICATE REPORT -->
+        <section id="view-results" class="hidden flex-col space-y-6">
+            
+            <!-- Action Toolbar (No Print) -->
+            <div class="bg-white p-4 rounded-xl shadow-md border border-slate-200 flex flex-wrap items-center justify-between gap-4 no-print">
+                <div class="flex items-center space-x-3">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+                    <h3 class="font-bold text-slate-800 text-sm">Hasil Asesmen Berhasil Didiagnosis</h3>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="downloadPDFReport()" class="px-4 py-2 bg-gradient-to-r from-kemenag-dark to-kemenag hover:from-kemenag hover:to-kemenag-light text-white font-bold text-xs rounded-xl shadow transition flex items-center space-x-2 border border-kemenag-gold/40">
+                        <i class="fa-solid fa-file-pdf text-kemenag-gold"></i>
+                        <span>Unduh Rapor Diagnostik & Sertifikat (PDF)</span>
+                    </button>
+                    <button onclick="resetAppToLogin()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Asesmen Ulang
+                    </button>
+                </div>
+            </div>
+
+            <!-- PRINTABLE DIAGNOSTIC REPORT WRAPPER -->
+            <div id="pdf-report-content" class="bg-white p-8 sm:p-12 rounded-2xl shadow-2xl border border-slate-200 space-y-8">
+                
+                <!-- Kemenag Official Letterhead / Kop Resmi -->
+                <div class="text-center border-b-4 border-double border-slate-800 pb-6 relative">
+                    <div class="flex items-center justify-center space-x-4 mb-2">
+                        <div class="w-16 h-16 rounded-full bg-kemenag p-2 flex items-center justify-center border-2 border-kemenag-gold shadow">
+                            <i class="fa-solid fa-award text-3xl text-kemenag-gold"></i>
+                        </div>
+                        <div class="text-left">
+                            <h2 class="font-serif font-bold text-lg sm:text-xl text-slate-900 uppercase tracking-wide">KEMENTERIAN AGAMA REPUBLIK INDONESIA</h2>
+                            <h3 class="text-xs sm:text-sm font-semibold text-kemenag tracking-wider">DIREKTORAT JENDERAL PENDIDIKAN ISLAM</h3>
+                            <p class="text-[10px] text-slate-500 mt-0.5">Jl. Lapangan Banteng Barat No. 3-4, Jakarta Pusat, DKI Jakarta | www.kemenag.go.id</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-kemenag-dark text-white py-1.5 px-4 font-serif font-bold text-xs sm:text-sm uppercase tracking-widest inline-block rounded border border-kemenag-gold">
+                        RAPOR DIAGNOSTIK & SERTIFIKAT KOMPETENSI AKGTK
+                    </div>
+                </div>
+
+                <!-- Executive User Metadata Box -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+                    <table class="w-full space-y-2">
+                        <tr>
+                            <td class="font-bold text-slate-500 w-36 py-1">Nama Peserta</td>
+                            <td class="font-extrabold text-slate-900 py-1" id="res-name">: -</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-slate-500 py-1">Satuan Kerja / Madrasah</td>
+                            <td class="font-semibold text-slate-800 py-1" id="res-madrasah">: -</td>
+                        </tr>
+                    </table>
+                    <table class="w-full space-y-2">
+                        <tr>
+                            <td class="font-bold text-slate-500 w-36 py-1">Peran Asesmen</td>
+                            <td class="font-extrabold text-kemenag py-1" id="res-role">: -</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-slate-500 py-1">Tanggal Selesai Asesmen</td>
+                            <td class="font-semibold text-slate-800 py-1" id="res-date">: -</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Score Overview Banner -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Total Score Card -->
+                    <div class="p-6 rounded-2xl bg-gradient-to-br from-kemenag-dark to-kemenag text-white text-center flex flex-col justify-center items-center relative overflow-hidden border border-kemenag-gold/40 shadow-lg">
+                        <span class="text-xs font-bold uppercase tracking-widest text-kemenag-goldlight">NILAI AKGTK (SKOR 100)</span>
+                        <div id="res-score-number" class="text-5xl font-black font-serif text-white my-2">0</div>
+                        <span id="res-predikat-badge" class="px-3 py-1 bg-kemenag-gold text-kemenag-dark font-extrabold text-xs rounded-full uppercase tracking-wider">
+                            Sangat Baik
+                        </span>
+                    </div>
+
+                    <!-- Competency Radar Chart Card -->
+                    <div class="md:col-span-2 p-6 bg-white rounded-2xl border border-slate-200 flex flex-col items-center justify-center">
+                        <h4 class="font-bold text-xs uppercase tracking-wider text-slate-600 mb-2">PEMETAAN DOMAIN KOMPETENSI (RADAR CHART)</h4>
+                        <div class="w-full max-w-xs h-48">
+                            <canvas id="competencyRadarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Competency Breakdown Table -->
+                <div>
+                    <h4 class="font-bold text-sm uppercase tracking-wider text-slate-800 mb-3 border-l-4 border-kemenag pl-3">
+                        Rincian Capaian Kompetensi Berdasarkan Kisi-Kisi Resmi
+                    </h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left border-collapse border border-slate-200">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 font-bold uppercase border-b border-slate-200">
+                                    <th class="p-3 border-r">Domain / Sub-Kompetensi</th>
+                                    <th class="p-3 border-r text-center">Jumlah Soal</th>
+                                    <th class="p-3 border-r text-center">Benar</th>
+                                    <th class="p-3 border-r text-center">Persentase</th>
+                                    <th class="p-3">Status Diagnostik</th>
+                                </tr>
+                            </thead>
+                            <tbody id="res-breakdown-tbody" class="divide-y divide-slate-200">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Assessor Analysis & Action Plan PKB Recommendation -->
+                <div class="p-6 bg-emerald-50/60 rounded-xl border border-emerald-200 space-y-3">
+                    <h4 class="font-bold text-xs uppercase tracking-wider text-emerald-950 flex items-center space-x-2">
+                        <i class="fa-solid fa-user-doctor text-kemenag"></i>
+                        <span>Rekomendasi Program Pengembangan Keprofesian Berkelanjutan (PKB Kemenag)</span>
+                    </h4>
+                    <div id="res-recommendation-text" class="text-xs text-slate-700 leading-relaxed space-y-1">
+                        <!-- Dynamic generated recommendations -->
+                    </div>
+                </div>
+
+                <!-- Official Verification Stamp -->
+                <div class="pt-8 border-t border-slate-200 flex items-center justify-between text-xs">
+                    <div>
+                        <p class="font-bold text-slate-800">Kode Verifikasi Asesmen:</p>
+                        <p class="font-mono text-slate-500 text-[11px]" id="res-verify-code">AKGTK-KMNG-2026-X991823</p>
+                    </div>
+                    <div class="text-right space-y-1">
+                        <p class="text-slate-600">Tim Pengembang & Asosiasi Asesor Pendidikan</p>
+                        <div class="font-serif font-bold text-kemenag text-sm">Direktorat KSKK / GTK Madrasah</div>
+                        <p class="text-[10px] text-emerald-800 font-semibold mt-1">Developed by : Dedi Efendi, S.Pd., M.PFis. (Pengawas Madrasah Kabupaten Agam)</p>
+                        <p class="text-[10px] text-slate-400">Dokumen sah diterbitkan secara elektronik.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-300 border-t border-kemenag-gold/30 py-3.5 text-center text-xs no-print mt-auto">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-award text-kemenag-gold"></i>
+                <span class="font-semibold text-white tracking-wide">AKGTK HOTS PRO</span>
+            </div>
+            <div class="font-medium text-slate-200 bg-slate-800/90 px-4 py-1 rounded-full border border-slate-700/80 shadow-sm text-[11px] sm:text-xs">
+                Developed by : <span class="text-kemenag-gold font-bold">Dedi Efendi, S.Pd., M.PFis.</span> <span class="text-slate-400 font-normal">(Pengawas Madrasah Kabupaten Agam)</span>
+            </div>
+            <div class="text-slate-400 text-[11px]">
+                &copy; 2026 Kemenag RI
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL: Navigasi Soal Palette -->
+    <div id="modal-grid" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h3 class="font-bold text-slate-800 text-sm">Peta Navigasi Lembar Jawaban</h3>
+                <button onclick="toggleQuestionGridModal()" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div id="modal-palette-content" class="grid grid-cols-5 sm:grid-cols-8 gap-2 max-h-[300px] overflow-y-auto custom-scrollbar p-1">
+                <!-- Palette injected -->
+            </div>
+            <div class="pt-3 border-t text-right">
+                <button onclick="toggleQuestionGridModal()" class="px-4 py-2 bg-kemenag text-white text-xs font-bold rounded-lg">
+                    Tutup Navigasi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const APP_STATE = {
+            user: {
+                nama: '',
+                madrasah: '',
+                role: 'guru',
+                jenjang: 'MTs',
+                mapel: 'Matematika HOTS'
+            },
+            config: {
+                totalQuestions: 100,
+                mode: 'simulasi', // simulasi or latihan
+                durationMinutes: 120
+            },
+            exam: {
+                questions: [],
+                answers: {}, // index -> { selectedOption: 'A', isFlagged: false }
+                currentIndex: 0,
+                timerInterval: null,
+                secondsRemaining: 7200,
+                chartInstance: null
+            }
+        };
+
+        // Comprehensive Question Generator Engine supporting all roles with HOTS scenarios
+        const QUESTION_TEMPLATES = {
+            guru: [
+                {
+                    domain: "Pedagogik - Teori Belajar & Kognitif",
+                    scenario: "Seorang guru MI mengamati bahwa siswa kelas IV mengalami kesulitan memahami konsep pecahan abstrak. Berdasarkan teori perkembangan kognitif Piaget dan konstruktivisme Vygotsky, guru ingin merancang intervensi pembelajaran yang tepat.",
+                    question: "Manakah strategi pedagogik berdiferensiasi yang paling tepat untuk memfasilitasi Zone of Proximal Development (ZPD) siswa tersebut?",
+                    options: [
+                        "A. Memberikan latihan soal rumus pecahan bertingkat secara mandiri tanpa bantuan alat peraga.",
+                        "B. Menerapkan scaffolding menggunakan potongan kue/kertas lipat nyata dan diskusi kelompok sebaya bertahap dari konkret ke abstrak.",
+                        "C. Meminta siswa menghafal perkalian silang pecahan secara mekanis melalui ceramah intensif.",
+                        "D. Mengalihkan materi ke bahasan lain karena usia anak belum siap menerima konsep rasional."
+                    ],
+                    key: "B",
+                    explanation: "Berdasarkan teori Vygotsky, konsep ZPD membutuhkan 'scaffolding' (bantuan bertahap dari benda konkret menuju representasi simbolik abstrak) serta interaksi sosial sebaya, sesuai prinsip pembelajaran konkret Piaget pada tahap operasional konkret anak."
+                },
+                {
+                    domain: "Pedagogik - Kurikulum Merdeka & Modul Ajar",
+                    scenario: "Dalam menyusun Modul Ajar Kurikulum Merdeka di Madrasah Tsanawiyah (MTs), Guru mendapati Capaian Pembelajaran (CP) menganalisis dampak perubahan iklim global.",
+                    question: "Perumusan Tujuan Pembelajaran (TP) dan Alur Tujuan Pembelajaran (ATP) berbobot HOTS yang paling hierarkis dan terstruktur adalah...",
+                    options: [
+                        "A. Siswa dapat menyebutkan definisi iklim dan menghafal nama-nama gas rumah kaca.",
+                        "B. Siswa mampu merancang model solusi adaptasi iklim lokal madrasah berdasarkan analisis data emisi sekitar.",
+                        "C. Siswa membaca artikel iklim lalu menyalin ulang ringkasan di buku catatan masing-masing.",
+                        "D. Siswa menonton video tentang pemanasan global tanpa melakukan evaluasi kritis."
+                    ],
+                    key: "B",
+                    explanation: "Indikator HOTS (C6 - Merancang/Creating) mengharuskan siswa menganalisis data empiris lingkungan nyata madrasah dan menciptakan solusi nyata, menyatu dengan pengembangan profil pelajar moderat & peduli lingkungan."
+                },
+                {
+                    domain: "Pedagogik - TPACK & Teknologi Pembelajaran",
+                    scenario: "Guru Madrasah Aliyah (MA) hendak mengajarkan materi visualisasi molekul atau representasi spasial fungsi Matematika rumit secara digital.",
+                    question: "Penerapan paradigma TPACK (Technological Pedagogical Content Knowledge) yang paling efektif dalam skenario tersebut adalah...",
+                    options: [
+                        "A. Menuliskan semua rumus panjang di papan tulis kayu menggunakan kapur berwarna.",
+                        "B. Memperlihatkan slide foto statis tentang rumus tanpa melibatkan interaksi visual siswa.",
+                        "C. Mengintegrasikan aplikasi simulasi interaktif 3D (seperti PhET/GeoGebra) yang dieksplorasi siswa dalam kelompok kolaboratif.",
+                        "D. Meminta siswa mencari sendiri di internet tanpa lembar kerja terpandu."
+                    ],
+                    key: "C",
+                    explanation: "TPACK menggabungkan pemanfaatan perangkat lunak interaktif (T) dengan metode penemuan kolaboratif (P) untuk menjelaskan materi esensial abstrak (C) secara mendalam."
+                },
+                {
+                    domain: "Pedagogik - Integrasi Nilai Islam & Moderasi Beragama",
+                    scenario: "Saat mengajarkan konsep sains tentang hukum kekekalan energi dan ekosistem di MTs, guru ingin mengintegrasikan nilai-nilai spiritual dan moral keislaman.",
+                    question: "Bagaimana cara terbaik mengintegrasikan nilai Islam secara terpadu tanpa terkesan dipaksakan?",
+                    options: [
+                        "A. Menghentikan materi sains sepenuhnya lalu menggantinya dengan ceramah Fiqih ibadah.",
+                        "B. Mengaitkan keteraturan hukum alam (sunnatullah) dan amanah mengelola bumi (khalifah) melalui refleksi kritis pemanfaatan energi ramah lingkungan.",
+                        "C. Meminta siswa menghafal teks Arab tanpa membahas korelasinya dengan ilmu pengetahuan modern.",
+                        "D. Menganggap ilmu sains sekuler dan tidak ada kaitannya sama sekali dengan ajaran Islam."
+                    ],
+                    key: "B",
+                    explanation: "Integrasi nilai Islam dalam madrasah mengaitkan fenomena sunnatullah (sains) dengan tanggung jawab moral manusia sebagai khalifah fil ardh, membangun pemahaman tauhid sains terpadu."
+                },
+                {
+                    domain: "Profesional - Literasi, Numerasi & HOTS",
+                    scenario: "Dalam sebuah tes literasi numerasi berbasis kasus madrasah, disajikan grafik peningkatan dana ZIS (Zakat, Infak, Sedekah) dan dampak pemberdayaan ekonomi umat selama 5 tahun.",
+                    question: "Soal HOTS yang menguji kemampuan evaluasi dan penalaran matematis siswa adalah...",
+                    options: [
+                        "A. Berapakah jumlah total uang zakat yang terkumpul pada tahun pertama?",
+                        "B. Tuliskan nama-nama muzakki yang menyumbang di madrasah!",
+                        "C. Berdasarkan tren grafik, analisislah efektivitas penyaluran ZIS terhadap penurunan angka kemiskinan warga sekitar madrasah dan prediksikan strateginya!",
+                        "D. Sebutkan angka tertinggi pada sumbu Y dalam grafik tersebut!"
+                    ],
+                    key: "C",
+                    explanation: "Pertanyaan pilihan C menuntut pemikiran tingkat tinggi (Analisis C4, Evaluasi C5, dan Prediksi/Desain C6) berlandaskan data numerik riil."
+                }
+            ],
+            kamad: [
+                {
+                    domain: "Manajerial - Perencanaan & Keuangan Madrasah",
+                    scenario: "Kepala Madrasah baru menghadapi tantangan berupa defisit efisiensi anggaran belanja operasional dan minimnya partisipasi pemangku kepentingan dalam RKAM (Rencana Kerja & Anggaran Madrasah).",
+                    question: "Langkah manajerial strategis berbasis data (EBM) yang harus diambil Kepala Madrasah adalah...",
+                    options: [
+                        "A. Menyusun RKAM sendiri secara tertutup tanpa melibatkan komite atau bendahara.",
+                        "B. Melakukan Analisis Rapor Pendidikan Madrasah, melibatkan Tim Pengembang Madrasah (TPM) dalam musyawarah terbuka, dan mengalokasikan anggaran berbasis prioritas mutu pembelajaran.",
+                        "C. Memotong gaji guru honorer secara sepihak untuk menutup kekosongan anggaran fisik.",
+                        "D. Menghentikan seluruh kegiatan ekstrakurikuler siswa tanpa evaluasi."
+                    ],
+                    key: "B",
+                    explanation: "Manajerial modern menuntut Evidence-Based Management (EBM) berpatokan Rapor Pendidikan, prinsip partisipatif, transparan, dan berfokus pada peningkatan mutu pembelajaran."
+                },
+                {
+                    domain: "Supervisi Klinis - Peningkatan Mutu Mengajar",
+                    scenario: "Berdasarkan hasil supervisi kelas, Kepala Madrasah menemukan sebagian besar guru senior masih menggunakan metode ceramah satu arah dan minim instrumen asesmen otentik.",
+                    question: "Pendekatan supervisi klinis berbasis coaching yang paling konstruktif dilakukan Kepala Madrasah adalah...",
+                    options: [
+                        "A. Memberikan surat teguran terbuka di depan umum saat apel pagi.",
+                        "B. Mengadakan sesi refleksi sejawat mandiri, memfasilitasi workshop Peer-Coaching, dan mendampingi penyusunan modul ajar secara bertahap.",
+                        "C. Membiarkan hal tersebut karena guru senior sulit diubah.",
+                        "D. Mengurangi jam mengajar guru secara mendadak tanpa diskusi."
+                    ],
+                    key: "B",
+                    explanation: "Supervisi klinis bertujuan membina, bukan menghukum. Pendekatan reflektif coaching membantu guru menyadari area pengembangan dan mendapatkan pendampingan terencana."
+                },
+                {
+                    domain: "Kewirausahaan & Kepemimpinan Inovatif",
+                    scenario: "Sebuah Madrasah Aliyah memiliki lahan kosong yang belum terintegrasi dan potensi minat literasi kewirausahaan siswa yang tinggi.",
+                    question: "Tindakan kepemimpinan kewirausahaan (entrepreneurial leadership) Kepala Madrasah yang paling inovatif adalah...",
+                    options: [
+                        "A. Membiarkan lahan terbengkalai agar tidak mengeluarkan biaya.",
+                        "B. Menjual lahan tersebut kepada pihak ketiga untuk kepentingan pribadi.",
+                        "C. Mengembangkan Edusociopreneurship (misal: Laboratorium Bisnis Organik/Digital Unit) bekerja sama dengan dunia usaha & dunia industri (DUDI) setempat.",
+                        "D. Menyewa tenaga luar tanpa melibatkan siswa dan guru sama sekali."
+                    ],
+                    key: "C",
+                    explanation: "Jiwa kewirausahaan Kepala Madrasah ditunjukkan dengan jeli melihat peluang, menciptakan kemitraan produktif, dan membangun unit wirausaha bernilai edukatif bagi siswa."
+                }
+            ],
+            pengawas: [
+                {
+                    domain: "Supervisi Akademik & Pendampingan Makro",
+                    scenario: "Pengawas Madrasah melakukan evaluasi terhadap 10 madrasah binaan dan menemukan variasi kualitas implementasi Kurikulum Merdeka yang sangat tajam.",
+                    question: "Strategi pendampingan supervisi akademik makro yang berdampak berkelanjutan adalah...",
+                    options: [
+                        "A. Menyusun Program KKG/MGMP Komunitas Belajar (Kombel) antar-madrasah binaan untuk saling berbagi praktik baik (best practices) dan mentoring terfokus.",
+                        "B. Meminta seluruh madrasah menyalin dokumen administrasi milik madrasah terbaik tanpa penyesuaian.",
+                        "C. Melaporkan seluruh guru ke dinas untuk dijatuhi sanksi administrasi.",
+                        "D. Membatasi pembinaan hanya pada madrasah unggulan saja."
+                    ],
+                    key: "A",
+                    explanation: "Pengawas berfungsi sebagai pembina dan fasilitator mutu. Membentuk Komunitas Belajar (Kombel) lintas madrasah binaan memicu kolaborasi transformatif berkelanjutan."
+                },
+                {
+                    domain: "Supervisi Manajerial & Akreditasi Mutu",
+                    scenario: "Menjelang asesmen akreditasi BAN-PDM, beberapa kepala madrasah binaan mengalami kebingungan dalam pemenuhan kriteria Indikator Mutu Kelulusan dan Tata Kelola Transparan.",
+                    question: "Intervensi supervisi manajerial yang harus dilakukan pengawas adalah...",
+                    options: [
+                        "A. Mengerjakan seluruh dokumen akreditasi secara mandiri pengganti tugas kepala madrasah.",
+                        "B. Menyelenggarakan audit klinis pra-akreditasi, analisis kesenjangan (gap analysis), dan bimbingan teknis SIMPATIKA/EMIS secara berkala.",
+                        "C. Menyuruh madrasah memalsukan data fisik demi nilai sempurna.",
+                        "D. Menunda proses akreditasi tanpa batasan waktu."
+                    ],
+                    key: "B",
+                    explanation: "Supervisi manajerial pengawas fokus pada pendampingan tata kelola, analisis kesenjangan bukti fisik otentik, dan bimbingan teknis sesuai regulasi Kemenag."
+                }
+            ],
+            pusat: [
+                {
+                    domain: "Tata Kelola & Otomasi Perpustakaan Madrasah",
+                    scenario: "Tenaga Perpustakaan Madrasah hendak mengalihkan sistem katalog manual ribuan buku menjadi Sistem Otomasi Perpustakaan berbasis Inisiasi Digital (SLiMS/KOHA).",
+                    question: "Langkah terstruktur dalam mengimplementasikan manajemen koleksi dan sirkulasi digital tersebut adalah...",
+                    options: [
+                        "A. Membuang seluruh buku fisik kuno tanpa melakukan inventarisasi.",
+                        "B. Melakukan klasifikasi DDC (Dewey Decimal Classification), pencatatan inventarisasi, input metadata ke database otomasi, dan memasang barcode sirkulasi.",
+                        "C. Membiarkan siswa mengambil buku tanpa pencatatan digital.",
+                        "D. Menyimpan semua buku di dalam gudang terkunci agar tidak rusak."
+                    ],
+                    key: "B",
+                    explanation: "Otomasi perpustakaan standar memerlukan pengorganisasian teknis baku (DDC, Inventarisasi, Katalogisasi Digital, Barcoding) untuk memudahkan sirkulasi & penelusuran informasi."
+                },
+                {
+                    domain: "Pengembangan Minat Baca & Literasi Digital",
+                    scenario: "Kunjungan siswa ke perpustakaan madrasah mengalami penurunan akibat maraknya penggunaan smartphone yang tidak terarah.",
+                    question: "Inovasi layanan perpustakaan yang paling efektif untuk memicu minat baca siswa di era digital adalah...",
+                    options: [
+                        "A. Melarang total siswa membawa HP ke area madrasah.",
+                        "B. Membangun Pojok Baca Digital (E-Library System) berisikan e-book interaktif dan mengadakan challenge ulasan buku di media sosial madrasah.",
+                        "C. Membeli buku fisik tanpa memperhatikan tren baca siswa.",
+                        "D. Mengubah fungsi perpustakaan menjadi gudang penyimpanan alat olahraga."
+                    ],
+                    key: "B",
+                    explanation: "Menghadapi era digital, perpustakaan madrasah harus bertransformasi menyediakan e-resources dan program literasi aktif yang adaptif dengan gaya hidup siswa."
+                }
+            ],
+            lab: [
+                {
+                    domain: "Keselamatan Kerja (K3) & Penanganan B3 di Lab",
+                    scenario: "Saat praktikum kimia/sains di laboratorium madrasah, terjadi tumpahan bahan kimia korosif pekat yang berpotensi menimbulkan bahaya uap beracun.",
+                    question: "Prosedur standar K3 (Keselamatan dan Kesehatan Kerja) pertama yang harus dilakukan Tenaga Laboratorium adalah...",
+                    options: [
+                        "A. Menyiram tumpahan dengan air dalam jumlah banyak tanpa pelindung diri.",
+                        "B. Mengisolasi area, menggunakan APD lengkap (sarung tangan nitril, respirator), menetralkan tumpahan dengan absorben sesuai MSDS, dan membuka ventilasi exhaust.",
+                        "C. Membiarkan tumpahan mengering sendiri di dalam ruangan tertutup.",
+                        "D. Menyuruh siswa membersihkan tumpahan dengan kain lap biasa."
+                    ],
+                    key: "B",
+                    explanation: "Sesuai regulasi K3 laboratorium, penanganan tumpahan B3 wajib merujuk pada Material Safety Data Sheet (MSDS), penggunaan APD penuh, isolasi area, dan neutralisasi aman."
+                },
+                {
+                    domain: "Manajemen & Maintenance Inventaris Alat Lab",
+                    scenario: "Tenaga Laboratorium menemukan beberapa mikroskop cahaya presisi tinggi dan timbangan analitis digital mulai mengalami kalibrasi yang tidak akurat.",
+                    question: "Tindakan pemeliharaan preventif (preventive maintenance) dan inventarisasi yang tepat adalah...",
+                    options: [
+                        "A. Langsung membuang alat tersebut ke tempat sampah umum.",
+                        "B. Mencatat pada kartu riwayat alat, melakukan pembersihan optik dengan silika gel/alkohol murni, serta menjadwalkan rekondisi kalibrasi standar secara berkala.",
+                        "C. Membongkar alat tanpa petunjuk panduan pabrikan.",
+                        "D. Menggunakan alat yang rusak tersebut untuk penilaian praktikum ujian akhir."
+                    ],
+                    key: "B",
+                    explanation: "Pemeliharaan preventif alat laboratorium melibatkan kartu perawatan berkala, pembersihan sesuai standar presisi instrumen, serta kalibrasi teratur."
+                }
+            ]
+        };
+
+        function generateFullQuestionBank(role, selectedJenjang, selectedMapel, totalRequired) {
+            const baseSet = QUESTION_TEMPLATES[role] || QUESTION_TEMPLATES['guru'];
+            let questions = [];
+            
+            // Loop and extrapolate high quality HOTS variants to build exactly N questions
+            for (let i = 0; i < totalRequired; i++) {
+                const template = baseSet[i % baseSet.length];
+                const qNum = i + 1;
+                
+                // Dynamic variation generation
+                let scenarioText = `[Kasus Asesmen #${qNum} - ${role.toUpperCase()}] ${template.scenario}`;
+                let questionText = `[Soal HOTS Tipe ${qNum}] ${template.question}`;
+                
+                if (role === 'guru') {
+                    scenarioText = `[Studi Kasus Pembelajaran ${selectedJenjang} - ${selectedMapel} - Soal #${qNum}] ${template.scenario}`;
+                }
+
+                questions.push({
+                    id: qNum,
+                    domain: template.domain,
+                    scenario: scenarioText,
+                    question: questionText,
+                    options: [...template.options],
+                    key: template.key,
+                    explanation: template.explanation
+                });
+            }
+            return questions;
+        }
+
+        function toggleRoleOptions(role) {
+            APP_STATE.user.role = role;
+            const guruSubOptions = document.getElementById('guru-sub-options');
+            if (role === 'guru') {
+                guruSubOptions.classList.remove('hidden');
+            } else {
+                guruSubOptions.classList.add('hidden');
+            }
+        }
+
+        async function handleLoginSubmit(event) {
+            event.preventDefault();
+
+            // Collect Form Values
+            APP_STATE.user.nama = document.getElementById('input-nama').value.trim();
+            APP_STATE.user.madrasah = document.getElementById('input-madrasah').value.trim();
+            APP_STATE.user.jenjang = document.getElementById('select-jenjang').value;
+            APP_STATE.user.mapel = document.getElementById('select-mapel').value;
+
+            APP_STATE.config.totalQuestions = parseInt(document.getElementById('select-jumlah-soal').value);
+            APP_STATE.config.mode = document.getElementById('select-mode-ujian').value;
+
+            // Generate Questions
+            if (APP_STATE.user.role === 'custom_ai') {
+                await generateAIQuestionsViaGemini();
+            } else {
+                APP_STATE.exam.questions = generateFullQuestionBank(
+                    APP_STATE.user.role, 
+                    APP_STATE.user.jenjang, 
+                    APP_STATE.user.mapel, 
+                    APP_STATE.config.totalQuestions
+                );
+            }
+
+            // Prepare Exam State
+            APP_STATE.exam.currentIndex = 0;
+            APP_STATE.exam.answers = {};
+            APP_STATE.exam.secondsRemaining = APP_STATE.config.totalQuestions * 72; // 1.2 min per question
+
+            // Update Header Display
+            document.getElementById('header-user-name').innerText = APP_STATE.user.nama;
+            document.getElementById('header-user-role').innerText = getRoleTitleDisplay();
+            document.getElementById('header-user-info').classList.remove('hidden');
+            document.getElementById('header-user-info').classList.add('flex');
+
+            // Switch View
+            switchView('view-exam');
+            startExamSimulation();
+        }
+
+        function getRoleTitleDisplay() {
+            const role = APP_STATE.user.role;
+            if (role === 'guru') return `Guru ${APP_STATE.user.jenjang} (${APP_STATE.user.mapel})`;
+            if (role === 'kamad') return `Kepala Madrasah`;
+            if (role === 'pengawas') return `Pengawas Madrasah`;
+            if (role === 'pusat') return `Tenaga Perpustakaan`;
+            if (role === 'lab') return `Tenaga Laboratorium`;
+            return `Peserta Custom AI HOTS`;
+        }
+
+        function switchView(viewId) {
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('view-exam').classList.add('hidden');
+            document.getElementById('view-results').classList.add('hidden');
+
+            const target = document.getElementById(viewId);
+            target.classList.remove('hidden');
+            if (viewId === 'view-exam') target.classList.add('flex');
+        }
+
+        async function generateAIQuestionsViaGemini() {
+            // Placeholder loading UI notice
+            const btnSubmit = document.querySelector('#form-login button[type="submit"]');
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> <span>Menghubungkan ke Gemini AI Engine...</span>`;
+
+            try {
+                const userQuery = `Buatkan 10 soal asesmen kompetensi HOTS untuk Guru Madrasah Kemenag tentang Kurikulum Merdeka dan Pedagogik Kontemporer dengan format JSON yang memiliki properti: domain, scenario, question, options (array 4 pilihan A,B,C,D), key (misal 'A'), explanation.`;
+                const systemPrompt = "Anda adalah Asesor Eksekutif Kementerian Agama RI (Kemenag). Hasilkan soal-soal HOTS berkualitas tinggi dalam format JSON murni.";
+                
+                const apiKey = ""; // Built-in runtime handling
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "ARRAY",
+                            items: {
+                                type: "OBJECT",
+                                properties: {
+                                    "domain": { "type": "STRING" },
+                                    "scenario": { "type": "STRING" },
+                                    "question": { "type": "STRING" },
+                                    "options": { "type": "ARRAY", "items": { "type": "STRING" } },
+                                    "key": { "type": "STRING" },
+                                    "explanation": { "type": "STRING" }
+                                },
+                                required: ["domain", "scenario", "question", "options", "key", "explanation"]
+                            }
+                        }
+                    }
+                };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (jsonText) {
+                    const generatedList = JSON.parse(jsonText);
+                    APP_STATE.exam.questions = generatedList.map((item, idx) => ({
+                        id: idx + 1,
+                        domain: item.domain,
+                        scenario: item.scenario,
+                        question: item.question,
+                        options: item.options,
+                        key: item.key,
+                        explanation: item.explanation
+                    }));
+                } else {
+                    throw new Error("Gagal menerima format dari Gemini");
+                }
+            } catch (err) {
+                console.warn("AI Generation fallback to offline bank:", err);
+                APP_STATE.exam.questions = generateFullQuestionBank('guru', 'MTs', 'Matematika HOTS', APP_STATE.config.totalQuestions);
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = `<i class="fa-solid fa-paper-plane text-kemenag-gold"></i> <span>MULAI ASESMEN KOMPETENSI AKGTK</span>`;
+            }
+        }
+
+        function startExamSimulation() {
+            // Setup Badge
+            document.getElementById('badge-exam-role').innerText = getRoleTitleDisplay();
+            document.getElementById('exam-mode-badge').innerText = APP_STATE.config.mode === 'latihan' ? 'Mode Latihan & Pembahasan' : 'Mode Simulasi Timer';
+            
+            // Build Question Grid Palette
+            renderPalette();
+
+            // Render First Question
+            renderCurrentQuestion();
+
+            // Start Timer
+            if (APP_STATE.exam.timerInterval) clearInterval(APP_STATE.exam.timerInterval);
+            APP_STATE.exam.timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            if (APP_STATE.exam.secondsRemaining <= 0) {
+                clearInterval(APP_STATE.exam.timerInterval);
+                alert("Waktu Asesmen Telah Habis! Sistem akan menyimpan lembar jawaban Anda.");
+                finishExam();
+                return;
+            }
+            APP_STATE.exam.secondsRemaining--;
+            const mins = Math.floor(APP_STATE.exam.secondsRemaining / 60);
+            const secs = APP_STATE.exam.secondsRemaining % 60;
+            document.getElementById('exam-timer').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function renderCurrentQuestion() {
+            const idx = APP_STATE.exam.currentIndex;
+            const q = APP_STATE.exam.questions[idx];
+            const ans = APP_STATE.exam.answers[idx] || {};
+
+            document.getElementById('q-number').innerText = idx + 1;
+            document.getElementById('q-total').innerText = APP_STATE.exam.questions.length;
+            document.getElementById('q-domain-badge').innerText = q.domain;
+            document.getElementById('q-scenario').innerText = q.scenario;
+            document.getElementById('q-text').innerText = q.question;
+
+            // Render Options
+            const container = document.getElementById('q-options');
+            container.innerHTML = '';
+
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            q.options.forEach((optText, optIdx) => {
+                const letter = optionLetters[optIdx] || 'A';
+                const isSelected = ans.selectedOption === letter;
+
+                const optBtn = document.createElement('div');
+                optBtn.className = `p-4 rounded-xl border-2 cursor-pointer transition flex items-start space-x-3 ${
+                    isSelected 
+                    ? 'border-kemenag bg-emerald-50/80 shadow-md' 
+                    : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+                }`;
+                optBtn.onclick = () => selectOption(letter);
+
+                optBtn.innerHTML = `
+                    <div class="w-7 h-7 rounded-lg ${isSelected ? 'bg-kemenag text-white' : 'bg-slate-100 text-slate-700'} font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                        ${letter}
+                    </div>
+                    <div class="text-sm text-slate-800 leading-snug font-medium pt-0.5">
+                        ${optText.replace(/^[A-D]\.\s*/, '')}
+                    </div>
+                `;
+                container.appendChild(optBtn);
+            });
+
+            // Update Flag UI
+            const isFlagged = ans.isFlagged || false;
+            document.getElementById('flag-text').innerText = isFlagged ? 'Ditandai Ragu' : 'Ragu-Ragu';
+            document.getElementById('btn-flag').className = `px-4 py-2.5 rounded-xl border-2 ${
+                isFlagged ? 'bg-amber-400 text-slate-900 border-amber-500 font-bold' : 'border-amber-400 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold'
+            } text-xs sm:text-sm flex items-center space-x-2 transition`;
+
+            // Previous Button Disabled State
+            document.getElementById('btn-prev').disabled = idx === 0;
+
+            // Handle Live Coaching Mode
+            const liveExpBox = document.getElementById('live-explanation-box');
+            if (APP_STATE.config.mode === 'latihan' && ans.selectedOption) {
+                liveExpBox.classList.remove('hidden');
+                document.getElementById('live-explanation-text').innerHTML = `
+                    <strong>Kunci Jawaban: ${q.key}</strong><br/>
+                    ${q.explanation}
+                `;
+            } else {
+                liveExpBox.classList.add('hidden');
+            }
+
+            renderPalette();
+        }
+
+        function selectOption(letter) {
+            const idx = APP_STATE.exam.currentIndex;
+            if (!APP_STATE.exam.answers[idx]) {
+                APP_STATE.exam.answers[idx] = {};
+            }
+            APP_STATE.exam.answers[idx].selectedOption = letter;
+            renderCurrentQuestion();
+        }
+
+        function toggleFlagQuestion() {
+            const idx = APP_STATE.exam.currentIndex;
+            if (!APP_STATE.exam.answers[idx]) {
+                APP_STATE.exam.answers[idx] = {};
+            }
+            APP_STATE.exam.answers[idx].isFlagged = !APP_STATE.exam.answers[idx].isFlagged;
+            renderCurrentQuestion();
+        }
+
+        function navigateQuestion(step) {
+            const newIdx = APP_STATE.exam.currentIndex + step;
+            if (newIdx >= 0 && newIdx < APP_STATE.exam.questions.length) {
+                APP_STATE.exam.currentIndex = newIdx;
+                renderCurrentQuestion();
+            }
+        }
+
+        function jumpToQuestion(index) {
+            APP_STATE.exam.currentIndex = index;
+            renderCurrentQuestion();
+            const modal = document.getElementById('modal-grid');
+            if (!modal.classList.contains('hidden')) toggleQuestionGridModal();
+        }
+
+        function renderPalette() {
+            const total = APP_STATE.exam.questions.length;
+            const container = document.getElementById('question-palette');
+            const modalContainer = document.getElementById('modal-palette-content');
+            
+            container.innerHTML = '';
+            modalContainer.innerHTML = '';
+
+            let answeredCount = 0;
+
+            for (let i = 0; i < total; i++) {
+                const ans = APP_STATE.exam.answers[i] || {};
+                const isCurrent = i === APP_STATE.exam.currentIndex;
+                const isAnswered = ans.selectedOption !== undefined;
+                const isFlagged = ans.isFlagged;
+
+                if (isAnswered) answeredCount++;
+
+                let bgClass = 'bg-slate-100 text-slate-700 border-slate-200';
+                if (isAnswered) bgClass = 'bg-kemenag text-white border-kemenag';
+                if (isFlagged) bgClass = 'bg-amber-400 text-slate-900 border-amber-500 font-extrabold';
+                if (isCurrent) bgClass += ' ring-2 ring-offset-2 ring-kemenag-gold';
+
+                const btnHtml = `
+                    <button onclick="jumpToQuestion(${i})" class="w-full h-9 rounded-lg border font-bold text-xs flex items-center justify-center transition ${bgClass}">
+                        ${i + 1}
+                    </button>
+                `;
+
+                container.insertAdjacentHTML('beforeend', btnHtml);
+                modalContainer.insertAdjacentHTML('beforeend', btnHtml);
+            }
+
+            document.getElementById('grid-progress-text').innerText = `${answeredCount} dari ${total} Dijawab`;
+        }
+
+        function toggleQuestionGridModal() {
+            const modal = document.getElementById('modal-grid');
+            modal.classList.toggle('hidden');
+        }
+
+        function confirmFinishExam() {
+            const answered = Object.keys(APP_STATE.exam.answers).filter(k => APP_STATE.exam.answers[k].selectedOption).length;
+            const total = APP_STATE.exam.questions.length;
+
+            if (answered < total) {
+                if (!confirm(`Anda baru menjawab ${answered} dari ${total} soal. Yakin ingin menyelesaikan asesmen sekarang?`)) {
+                    return;
+                }
+            } else {
+                if (!confirm("Apakah Anda yakin ingin menyelesaikan dan mengirimkan jawaban Asesmen AKGTK?")) {
+                    return;
+                }
+            }
+            finishExam();
+        }
+
+        function confirmExitExam() {
+            if (confirm("Yakin ingin keluar dari portal asesmen? Kemajuan Anda saat ini tidak akan disimpan.")) {
+                resetAppToLogin();
+            }
+        }
+
+        function resetAppToLogin() {
+            if (APP_STATE.exam.timerInterval) clearInterval(APP_STATE.exam.timerInterval);
+            document.getElementById('header-user-info').classList.add('hidden');
+            switchView('view-login');
+        }
+
+        function finishExam() {
+            if (APP_STATE.exam.timerInterval) clearInterval(APP_STATE.exam.timerInterval);
+
+            // Calculate Score
+            let correctCount = 0;
+            const domainScores = {};
+
+            APP_STATE.exam.questions.forEach((q, idx) => {
+                const userAns = APP_STATE.exam.answers[idx]?.selectedOption;
+                const isCorrect = userAns === q.key;
+
+                if (isCorrect) correctCount++;
+
+                // Track per domain
+                if (!domainScores[q.domain]) {
+                    domainScores[q.domain] = { total: 0, correct: 0 };
+                }
+                domainScores[q.domain].total++;
+                if (isCorrect) domainScores[q.domain].correct++;
+            });
+
+            const finalScore = Math.round((correctCount / APP_STATE.exam.questions.length) * 100);
+
+            // Populate Metadata Results
+            document.getElementById('res-name').innerText = `: ${APP_STATE.user.nama}`;
+            document.getElementById('res-madrasah').innerText = `: ${APP_STATE.user.madrasah}`;
+            document.getElementById('res-role').innerText = `: ${getRoleTitleDisplay()}`;
+            document.getElementById('res-date').innerText = `: ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
+            document.getElementById('res-score-number').innerText = finalScore;
+
+            // Predikat
+            const predikatBadge = document.getElementById('res-predikat-badge');
+            if (finalScore >= 86) {
+                predikatBadge.innerText = "SANGAT BAIK (UTAMA)";
+                predikatBadge.className = "px-3 py-1 bg-kemenag-gold text-kemenag-dark font-extrabold text-xs rounded-full uppercase";
+            } else if (finalScore >= 70) {
+                predikatBadge.innerText = "BAIK (MADYA)";
+                predikatBadge.className = "px-3 py-1 bg-emerald-300 text-emerald-950 font-extrabold text-xs rounded-full uppercase";
+            } else if (finalScore >= 55) {
+                predikatBadge.innerText = "CUKUP (MUDA)";
+                predikatBadge.className = "px-3 py-1 bg-amber-300 text-amber-950 font-extrabold text-xs rounded-full uppercase";
+            } else {
+                predikatBadge.innerText = "PERLU PEMBINAAN (PERTAMA)";
+                predikatBadge.className = "px-3 py-1 bg-red-300 text-red-950 font-extrabold text-xs rounded-full uppercase";
+            }
+
+            // Populate Breakdown Table
+            const tbody = document.getElementById('res-breakdown-tbody');
+            tbody.innerHTML = '';
+
+            const radarLabels = [];
+            const radarData = [];
+
+            Object.keys(domainScores).forEach(domainName => {
+                const d = domainScores[domainName];
+                const pct = Math.round((d.correct / d.total) * 100);
+
+                radarLabels.push(domainName.split(' - ')[1] || domainName);
+                radarData.push(pct);
+
+                let statusBadge = '<span class="text-emerald-700 font-bold">Kompeten</span>';
+                if (pct < 70) statusBadge = '<span class="text-amber-700 font-bold">Perlu Penguatan</span>';
+                if (pct < 50) statusBadge = '<span class="text-red-700 font-bold">Prioritas Diklat</span>';
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50";
+                tr.innerHTML = `
+                    <td class="p-3 border-r font-semibold text-slate-800">${domainName}</td>
+                    <td class="p-3 border-r text-center font-bold">${d.total}</td>
+                    <td class="p-3 border-r text-center font-bold text-kemenag">${d.correct}</td>
+                    <td class="p-3 border-r text-center font-extrabold">${pct}%</td>
+                    <td class="p-3 font-medium">${statusBadge}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Recommendations
+            const recBox = document.getElementById('res-recommendation-text');
+            if (finalScore >= 80) {
+                recBox.innerHTML = `
+                    <p>• Direkomendasikan menjadi <strong>GURU/TENAGA KEPENDIDIKAN INTI / FASILITATOR DAERAH (FASDA)</strong> dalam program Pengembangan Keprofesian Berkelanjutan (PKB) Kemenag RI.</p>
+                    <p>• Disarankan mempublikasikan Karya Inovatif / Penelitian Tindakan Kelas (PTK) tingkat nasional.</p>
+                `;
+            } else {
+                recBox.innerHTML = `
+                    <p>• Diprioritaskan mengikuti <strong>Bimtek / Pelatihan Asesmen HOTS & Pembelajaran Berdiferensiasi</strong> pada Pokja KKG/MGMP/MDK terdekat.</p>
+                    <p>• Disarankan pendampingan supervisi klinis secara berkala dari Pengawas Madrasah setempat.</p>
+                `;
+            }
+
+            // Render Radar Chart
+            renderRadarChart(radarLabels, radarData);
+
+            switchView('view-results');
+        }
+
+        function renderRadarChart(labels, dataValues) {
+            const ctx = document.getElementById('competencyRadarChart').getContext('2d');
+            
+            if (APP_STATE.exam.chartInstance) {
+                APP_STATE.exam.chartInstance.destroy();
+            }
+
+            APP_STATE.exam.chartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Persentase Capaian (%)',
+                        data: dataValues,
+                        backgroundColor: 'rgba(0, 90, 54, 0.2)',
+                        borderColor: '#005a36',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#d4af37',
+                        pointBorderColor: '#005a36',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e2e8f0' },
+                            grid: { color: '#cbd5e1' },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function downloadPDFReport() {
+            const element = document.getElementById('pdf-report-content');
+            const opt = {
+                margin:       [0.3, 0.3, 0.3, 0.3],
+                filename:     `Rapor_AKGTK_${APP_STATE.user.nama.replace(/\s+/g, '_')}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Execute html2pdf download
+            html2pdf().set(opt).from(element).save();
+        }
+
+        window.onload = function() {
+            console.log("AKGTK Professional Assessment Platform Ready.");
+        };
+    </script>
+</body>
+</html>
